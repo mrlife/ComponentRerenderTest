@@ -1,0 +1,30 @@
+﻿@page "/"
+
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<ContactContext> DbFactory
+
+	<CascadingValue Value="_editContext">
+		<InputText @bind-Value="_text" />
+	</CascadingValue>
+
+	<ShowString Value="@_value" />
+	<ShowContact Contact="_contact" />
+
+@code {
+	private EditContext _editContext;
+	private string _text;
+	private string _value;
+	private Contact _contact;
+
+	protected override void OnInitialized()
+	{
+		_editContext = new EditContext((object)(_text ?? ""));
+		LoadOnce();
+	}
+
+	private void LoadOnce()
+	{
+		_value = DateTime.Now.ToLongTimeString();
+		_contact = DbFactory.CreateDbContext().Contacts.SingleOrDefault(c => c.Id == 5);
+	}
+}
